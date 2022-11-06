@@ -1,11 +1,15 @@
 
-import express from "express"
-import {MongoClient} from "mongodb"
-import * as dotenv from "dotenv"
+import express from "express";
+import {MongoClient} from "mongodb";
+import * as dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 //const url="mongodb://127.0.0.1:27017";
-const mongo_url=process.env.url;
-const PORT=3000;
+const mongo_url=process.env.URL;
+const PORT=process.env.PORT;
+const app=express();
+app.use (express.json());
+app.use(cors());
 //......................... for mongo db connection
           async function createConnection(){
           const client=new MongoClient(mongo_url);
@@ -14,8 +18,7 @@ const PORT=3000;
           return client;
 }
 //..........................
-          const app=express();
-          app.use (express.json());
+         
           const client= await createConnection();
 //...................
            app.get("/",function(req,res){
