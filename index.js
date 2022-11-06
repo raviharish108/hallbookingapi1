@@ -5,7 +5,7 @@ import * as dotenv from "dotenv"
 dotenv.config();
 //const url="mongodb://127.0.0.1:27017";
 const mongo_url=process.env.url;
-const PORT=process.env.port;
+const PORT=3000;
 //......................... for mongo db connection
           async function createConnection(){
           const client=new MongoClient(mongo_url);
