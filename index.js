@@ -27,8 +27,15 @@ app.use(cors());
 /// ...............................1st requirement for creating room
             app.post('/createroom',async function (req,res){
             const new_room=req.body;
+            const present=req.body.room_id
+            const room_=await client.db("mongodb").collection("room").findOne({room_id:present})
+            if(present===room_.room_id){
+                res.send("this room id is already used you give some other room_id")
+            }
+            else{
             const room=await client.db("mongodb").collection("room").insertOne(new_room);
              res.send(room);
+             }
           })
 
 // ...........................2nd requirement for booking room
