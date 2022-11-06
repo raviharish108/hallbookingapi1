@@ -17,6 +17,10 @@ const PORT=3000;
           const app=express();
           app.use (express.json());
           const client= await createConnection();
+//...................
+           app.get("/",function(req,res){
+            res.send("helloworld")
+           })          
 /// ...............................1st requirement for creating room
             app.post('/createroom',async function (req,res){
             const new_room=req.body;
