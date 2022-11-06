@@ -37,7 +37,12 @@ app.use(cors());
              res.send(room);
              }
           })
-
+          
+//.........................
+           app.get('/createroom',async function(req,res){
+            const rooms= await client.db("mongodb").collection("room").find().toArray();
+            res.send(rooms);
+           })
 // ...........................2nd requirement for booking room
             app.post('/booking',async function (req,res){
             const name=req.body.name;
