@@ -39,7 +39,7 @@ app.use(cors());
           })
           
 //.........................
-           app.get('/createroom',async function(req,res){
+           app.get('/rooms',async function(req,res){
             const rooms= await client.db("mongodb").collection("room").find().toArray();
             res.send(rooms);
            })
