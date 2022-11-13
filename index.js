@@ -4,6 +4,9 @@ import {MongoClient} from "mongodb";
 import * as dotenv from "dotenv";
 import cors from "cors";
 dotenv.config();
+let date_ob = new Date();
+let hours = date_ob.getHours();
+let minutes = date_ob.getMinutes();
 //const url="mongodb://127.0.0.1:27017";
 const mongo_url=process.env.URL;
 const PORT=process.env.PORT;
@@ -29,7 +32,8 @@ app.use(cors());
             const new_room=req.body;
             const present=req.body.room_id
             const room_=await client.db("mongodb").collection("room").findOne({room_id:present})
-            if(present===room_.room_id){
+            
+            if(room_){
                 res.send("this room id is already used you give some other room_id")
             }
             else{
@@ -43,40 +47,28 @@ app.use(cors());
             const rooms= await client.db("mongodb").collection("room").find().toArray();
             res.send(rooms);
            })
+//............................
+
+             app.get('/getroom/:id',async function(req,res){
+                const {id}=req.params
+              const getroom= await client.db("mongodb").collection("room").findOne({room_id:id});
+              res.send(getroom);
+              })
+
+
 // ...........................2nd requirement for booking room
             app.post('/booking',async function (req,res){
             const name=req.body.name;
-            const initial_name=await client.db("mongodb").collection("hotelbooking").findOne({"name":name});
-  
-   
- //.......................for current date and time time 
-                 let date_ob = new Date();
-                 let date = ("0" + date_ob.getDate()).slice(-2);
-                 let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-                let year = date_ob.getFullYear();
-                 let hours = date_ob.getHours();
-                 let minutes = date_ob.getMinutes();
-                 let seconds = date_ob.getSeconds();
-                 let current_date=year + "-" + month + "-" + date ; 
-                 const presentroom=await client.db("mongodb").collection("hotelbooking").findOne({"date":current_date});
-                 let start_time=hours + ":" + minutes + ":" + seconds;
-                let end_time=(req.body.hours+hours) + ":" + minutes + ":" + seconds;
-                let room_id=req.body.room_id
-                //.................
-            if(initial_name){
-                   res.send("this room is already booked")
-             }
-            else if(presentroom.room_id===room_id){
-                     res.send("this room is already booked for in this date");
-              }
-            else{
-                const new_booking={"name":name,"date":current_date,"start_time":start_time,"end_time":end_time,"room_id":room_id};
-
+            const date=req.body.date;
+            const start_time=(hours + ":" + minutes);
+            const end_time=req.body.end_time;   
+           const room_id=req.body.room_id
+                const new_booking={"name":name,"date":date,"start_time":start_time,"end_time":end_time,"room_id":room_id};
                 const booking=await client.db("mongodb").collection("hotelbooking").insertOne(new_booking);
                 console.log(booking);
                  res.send(booking);
                 }
-                } 
+                
                 )
 
 
@@ -106,15 +98,11 @@ console.log(booked);
 res.send(booked);
 })
 ////.......4th requirement customer data with booking
-app.get("/customerdata",async function(req,res){
-    let customer_data=[];
-    const bookingarray=await client.db("mongodb").collection("hotelbooking").find().toArray();
-    bookingarray.map((element)=>{
-       
-        customer_data.push({"custome_name":element.name,"room_id":element.room_id,"date":element.date,"start_time":element.start_time,"end_time":element.end_time})
-    })
-   console.log(customer_data);
-   res.send(customer_data);
+app.get("/customerdata/:id",async function(req,res){
+    const {id}=req.params;
+   const getbook=await client.db("mongodb").collection("hotelbooking").findOne({room_id:id});
+   
+   res.send (getbook);
 })
 app.delete("/checkout/:id",async function(req,res){
     const {id}=req.params;
